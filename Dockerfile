@@ -12,9 +12,7 @@ RUN chown ${ISC_PACKAGE_MGRUSER}:${ISC_PACKAGE_IRISGROUP} /opt/irisapp
 USER irisowner
 
 RUN mkdir -p /tmp/deps \
-
  && cd /tmp/deps \
-
  && wget -q https://pm.community.intersystems.com/packages/zpm/latest/installer -O zpm.xml
 
 
@@ -32,6 +30,10 @@ RUN \
   do $SYSTEM.OBJ.Load("Installer.cls", "ck") \
   set sc = ##class(App.Installer).setup() \
   Do $system.OBJ.Load("/tmp/deps/zpm.xml", "ck") \
+  set a=##class(Security.Applications).%OpenId("/csp/irisapp") \
+  set a.iKnowEnabled=1 \
+  set a.DeepSeeEnabled=1 \
+  do a.%Save() \
   zn "IRISAPP" 
   
 
